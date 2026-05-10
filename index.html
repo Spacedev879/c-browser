@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>c-browser // Spacedev879</title>
+    <!-- Google reCAPTCHA API -->
+    <script src="https://google.com" async defer></script>
+    <style>
+        body { background: #1e1e1e; color: #d4d4d4; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        #terminal { width: 90%; max-width: 450px; background: #252526; border-radius: 8px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid #333; text-align: center; }
+        h2 { color: #fff; margin: 0 0 10px 0; font-weight: 500; }
+        .info-text { color: #858585; font-size: 0.9rem; margin-bottom: 25px; }
+        .hidden { display: none; }
+        button { background: #007acc; color: #fff; border: none; padding: 12px 24px; border-radius: 4px; cursor: pointer; font-size: 0.9rem; transition: 0.2s; margin: 5px; }
+        button:hover { background: #0062a3; }
+        button.secondary { background: #3a3d41; }
+        .captcha-container { display: flex; justify-content: center; margin: 20px 0; }
+        #final-link { color: #4fc1ff; text-decoration: none; font-weight: bold; display: block; margin-top: 20px; }
+    </style>
+</head>
+<body onload="detectOS()">
+
+<div id="terminal">
+    <h2>c-browser</h2>
+    <div id="os-info" class="info-text">Scanning architecture...</div>
+
+    <!-- Step 1: OS Context -->
+    <div id="step-1">
+        <p>Is this environment a VM or your Main OS?</p>
+        <button onclick="nextStep('VM')">Virtual Machine</button>
+        <button class="secondary" onclick="nextStep('Main')">Main OS</button>
+    </div>
+
+    <!-- Step 2: Real reCAPTCHA -->
+    <div id="step-2" class="hidden">
+        <p>Security Verification Required</p>
+        <div class="captcha-container">
+            <!-- IMPORTANT: Replace the data-sitekey with your real key from Google -->
+            <div class="g-recaptcha" 
+                 data-sitekey="INSERT_YOUR_SITE_KEY_HERE" 
+                 data-callback="onCaptchaSuccess"
+                 data-theme="dark"></div>
+        </div>
+    </div>
+
+    <!-- Final: Download Links -->
+    <div id="success" class="hidden">
+        <p>Verification Passed. Accessing binaries...</p>
+        <a id="final-link" href="https://github.com" target="_blank">
+            → Download GCC/MinGW for Win64
+        </a>
+    </div>
+</div>
+
+<script>
+let osName = "Unknown";
+
+function detectOS() {
+    const ua = navigator.userAgent;
+    if (ua.indexOf("Win64") !== -1 || ua.indexOf("x64") !== -1) osName = "Windows 64-bit";
+    else if (ua.indexOf("Mac") !== -1) osName = "macOS";
+    else if (ua.indexOf("Linux") !== -1) osName = "Linux";
+    document.getElementById('os-info').innerText = "System: " + osName;
+}
+
+function nextStep(env) {
+    console.log("Environment selected: " + env);
+    document.getElementById('step-1').classList.add('hidden');
+    document.getElementById('step-2').classList.remove('hidden');
+}
+
+// This function is triggered by Google when the CAPTCHA is solved
+function onCaptchaSuccess(response) {
+    if (response) {
+        document.getElementById('step-2').classList.add('hidden');
+        document.getElementById('success').classList.remove('hidden');
+    }
+}
+</script>
+
+</body>
+</html>
